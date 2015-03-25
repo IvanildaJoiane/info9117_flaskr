@@ -30,6 +30,13 @@ class FlaskrTestCase(unittest.TestCase):
 
     def test_multiple_login_logout(self):
         # Test admin login
+
+        # for key in flaskr.USERS:
+        #     rv = self.login(key,flaskr.USERS[key])
+        #     assert 'You were logged in' in rv.data
+        #     rv = self.logout()
+        #     assert 'You were logged out' in rv.data
+
         rv = self.login('admin', 'default')
         assert 'You were logged in' in rv.data
         rv = self.logout()
@@ -68,11 +75,41 @@ class FlaskrTestCase(unittest.TestCase):
         self.login('admin', 'default')
         rv = self.app.post('/add', data=dict(
             title='<Hello>',
-            text='<strong>HTML</strong> allowed here'
+            text='<strong>HTML</strong> allowed here',
+            start_time='',
+            end_time=''
         ), follow_redirects=True)
         assert 'No entries here so far' not in rv.data
         assert '&lt;Hello&gt;' in rv.data
         assert '<strong>HTML</strong> allowed here' in rv.data
+
+    def test_by_someone(self):
+        self.login('admin', 'default')
+        rv = self.app.post('/add', data=dict(
+            title='<Hello>',
+            text='<strong>HTML</strong> allowed here',
+            start_time='<22:00>',
+            end_time='<23:00>'
+        ), follow_redirects=True)
+        # assert 'by admin'
+        assert 'by admin' in rv.data
+
+
+    def test_time (self):
+        self.login('admin', 'default')
+        rv = self.app.post('/add', data=dict(
+            title='<Hello>',
+            text='<strong>HTML</strong> allowed here',
+            start_time='<22:00>',
+            end_time='<23:00>'
+        ), follow_redirects=True)
+        # assert 'time'
+        assert 'by admin' in rv.data
+        assert '&lt;22:00&gt; &lt;23:00&gt;' in rv.data
+
+
+
+
 
 
 if __name__ == '__main__':

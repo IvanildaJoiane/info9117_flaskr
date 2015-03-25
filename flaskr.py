@@ -4,7 +4,8 @@ from flask import Flask, request, session, g, redirect, url_for, \
     abort, render_template, flash
 
 #configuration
-DATABASE = 'db/flask.db'
+#DATABASE = 'db/flask.db'
+DATABASE = '/Users/JoianeRodrigues/info9117/info9117_flaskr-master/db/flask.db'
 DEBUG = True
 SECRET_KEY = 'development key'
 #USERNAME = 'admin'
@@ -17,6 +18,7 @@ app.config.from_object(__name__)
 app.config.from_envvar('FLASKR_SETTINGS', silent=True)
 
 def connect_db():
+    print app.config['DATABASE']
     return sqlite3.connect(app.config['DATABASE'])
 
 def init_db():
@@ -37,16 +39,16 @@ def teardown_request(exception):
 
 @app.route('/')
 def show_entries():
-    cur = g.db.execute('select title, text, username from entries order by id desc')
-    entries = [dict(title=row[0], text=row[1], username=row[2]) for row in cur.fetchall()]
+    cur = g.db.execute('select title, text, username, start_time, end_time from entries order by id desc')
+    entries = [dict(title=row[0], text=row[1], username=row[2], start_time=row[3], end_time=row[4]) for row in cur.fetchall()]
     return render_template('show_entries.html', entries=entries)
 
-@app.route('/add', methods=['POST'])
+@app.route('/add', methods=['POST'])#TO ENTRY A NEW POST#
 def add_entry():
     if not session.get('logged_in'):
         abort(401)
-    g.db.execute('insert into entries (title, text, username) values (?,?,?)',
-                 [request.form['title'], request.form['text'], session['username']])
+    g.db.execute('insert into entries (title, text, username, start_time, end_time) values (?,?,?,?,?)',
+                 [request.form['title'], request.form['text'], session['username'], request.form['start_time'], request.form['end_time']])
     g.db.commit()
     flash('New entry was successfully posted')
     return redirect(url_for('show_entries'))
