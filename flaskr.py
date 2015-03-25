@@ -5,7 +5,8 @@ from flask import Flask, request, session, g, redirect, url_for, \
 
 #configuration
 #DATABASE = 'db/flask.db'
-DATABASE = '/Users/JoianeRodrigues/info9117/info9117_flaskr-master/db/flask.db'
+# DATABASE = '/Users/JoianeRodrigues/info9117/info9117_flaskr-master/db/flask.db'
+DATABASE = '/Users/JoianeRodrigues/info9117/info9117_flaskr/db/flask.db'
 DEBUG = True
 SECRET_KEY = 'development key'
 #USERNAME = 'admin'
