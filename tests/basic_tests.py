@@ -74,15 +74,24 @@ class FlaskrTestCase(unittest.TestCase):
     def test_messages(self):
         self.login('admin', 'default')
         rv = self.app.post('/add', data=dict(
+<<<<<<< HEAD:flaskr_tests.py
             title='<Hello>',
             text='<strong>HTML</strong> allowed here',
             start_time='',
             end_time=''
+=======
+            title='<Hi>',
+            text='<strong>HTML</strong> allowed here',
+            start_time= '<15:00>',
+            end_time= '<17:30>',
+
+>>>>>>> d19ef11f1b10b276e9737d1bfd7c657b01791a38:tests/basic_tests.py
         ), follow_redirects=True)
         assert 'No entries here so far' not in rv.data
-        assert '&lt;Hello&gt;' in rv.data
+        assert '&lt;Hi&gt;' in rv.data
         assert '<strong>HTML</strong> allowed here' in rv.data
 
+<<<<<<< HEAD:flaskr_tests.py
     def test_by_someone(self):
         self.login('admin', 'default')
         rv = self.app.post('/add', data=dict(
@@ -111,7 +120,66 @@ class FlaskrTestCase(unittest.TestCase):
 
 
 
+=======
+    def test_message_other_user(self):
+        self.login('jim', 'bean')
+        rv = self.app.post('/add', data=dict(
+            title='<C++Exercise01>',
+            text='<strong>HTML</strong> allowed here',
+        ), follow_redirects=True)
+        assert 'No entries here so far' not in rv.data 
+        assert '&lt;C++Exercise01&gt;' in rv.data
+        assert '<strong>HTML</strong> allowed here' in rv.data
+        assert 'jim' in rv.data
+
+
+    def test_time(self):
+        from time import gmtime, strftime
+        self.login('admin', 'default')
+        rv = self.app.post('/add', data=dict(
+            title='<Hi>',
+            text='<strong>HTML</strong> allowed here',
+        ), follow_redirects=True)
+        curr_time = strftime("%Y-%m-%d %H:%M:%S", gmtime())
+        assert 'No entries here so far' not in rv.data
+        assert '&lt;Hi&gt;' in rv.data
+        assert 'by admin' in rv.data
+        assert curr_time in rv.data
+
+    def test_comment(self):
+        self.login('admin', 'default')
+        self.app.post('/add', data=dict(
+            title='Hi',
+            text='<strong>HTML</strong> allowed here'
+        ), follow_redirects=True)
+        rv = self.app.post('/1/add_comments', data= dict(
+            comment_input = '<FinalVERSION>'
+        ), follow_redirects=True)
+        assert 'No entries here so far' not in rv.data
+        assert '&lt;FinalVERSION&gt;' in rv.data
+        assert 'by admin' in rv.data
+       
+        
+    def test_end_time(self):
+        from time import gmtime, strftime
+
+
+        self.login('admin', 'default')
+        self.app.post('/add', data= dict(
+            title='<Hi>',
+            text='<strong>HTML</strong> allowed here'
+        ), follow_redirects=True)
+        rv = self.app.post('/1/add_end_time', follow_redirects=True)
+        curr_time = strftime("%Y-%m-%d %H:%M:%S", gmtime())
+        assert 'No entries here so far' not in rv.data
+        assert '&lt;Hi&gt;' in rv.data
+        assert 'by admin' in rv.data
+        assert 'End at: '+ curr_time in rv.data
+
+        
+>>>>>>> d19ef11f1b10b276e9737d1bfd7c657b01791a38:tests/basic_tests.py
 
 if __name__ == '__main__':
     unittest.main()
+
 
